@@ -3,27 +3,27 @@
   <div class="gamers">
     <div class="gamer">
     <h1>SEN</h1>
-    <div class="gamerNumberOfLives"><h2>%100</h2></div>
+    <div class="gamerNumberOfLives" :style="{'background-color': gamerNumberOfLives>70 ? '#00FF00':(gamerNumberOfLives>30 ? 'yellow' :  'red')}"><h2>%{{gamerNumberOfLives}}</h2></div>
   </div>
   <div class="monster">
     <h1>CANAVAR</h1>
-    <div class="monsterNumberOfLives"><h2>%100</h2></div>
+    <div class="monsterNumberOfLives" :style="{'background-color': monsterNumberOfLives>70 ? '#00FF00':(monsterNumberOfLives>30 ? 'yellow' :  'red')}"><h2>%{{monsterNumberOfLives}}</h2></div>
   </div>
   </div>
   <div class="buttons">
-    <button class="attack">Saldırı</button>
-    <button class="specialAttack" >Özel Saldırı</button>
-    <button class="firstAid">İlk yardım</button>
-    <button class="giveUp">Pes Et</button>
+    <button class="attack" v-if="gamerNumberOfLives!=0" @click="attack('attack')">Saldırı</button>
+    <button class="specialAttack" v-if="gamerNumberOfLives!=0 " @click="attack('specialAttack')" >Özel Saldırı</button>
+    <button class="firstAid" @click="attack('firstAid')" >İlk yardım</button>
+    <button class="giveUp" v-if="gamerNumberOfLives!=0" @click="attack('giveUp')">Pes Et</button>
   </div>
   <div class="log">
     <h3 class="logsText">Logs</h3>
-    <div class="result">
+    <div class="result" v-for="(item, index) in logsGamer" :key="index">
     <div class="gamerResut">
-      <h3>Canavarın canının azalttın (8)</h3>
+      <h3>Canavarın canının azaltman ({{item}})</h3>
     </div>
     <div class="monsterResult">
-      <h3>Canavarın saldırısı (5)</h3>
+      <h3>Canavarın saldırısı ({{logsMonster[index]}})</h3>
     </div>
   </div>
   
@@ -32,17 +32,61 @@
 </template>
 
 <script>
+
 export default {
   name: 'HelloWorld',
   data(){
     return{
-      caount:0
+      monsterNumberOfLives:100,
+      gamerNumberOfLives:100,
+      logsGamer:[],
+      logsMonster:[]
     }
   },
   props: {
     msg: String
+  },
+  methods:{
+    attack:function(status){
+      console.log(this.logsGamer,this.logsMonster)
+      if(status=="attack" && this.monsterNumberOfLives>0 &&  this.gamerNumberOfLives>0 ){
+      this.logsGamer.push(10);
+      this.monsterNumberOfLives-=10;
+      this.logsMonster.push(20);
+      this.gamerNumberOfLives-=20;
+      }
+    
+      if(this.gamerNumberOfLives!=100 && status=="firstAid"){
+        if(this.gamerNumberOfLives+30>100){
+        this.gamerNumberOfLives=100;
+        }else{
+          this.gamerNumberOfLives+=30;
+        }
+      }
+      if(status=="specialAttack" && this.monsterNumberOfLives>0 && this.gamerNumberOfLives>0){
+        if(this.monsterNumberOfLives-30<0){
+          this.logsGamer.push(30);
+          this.logsMonster.push(20);
+          this.monsterNumberOfLives=0;
+          this.monsterNumberOfLives-=30;
+        }else{
+          this.logsGamer.push(30);
+          this.logsMonster.push(20);
+          this.gamerNumberOfLives-=20;
+          this.monsterNumberOfLives-=30;
+        }
+      }
+      if(status=="giveUp"){
+        this.logsGamer.push(0);
+        this.logsMonster.push(0);
+        this.gamerNumberOfLives=0;
+        this.monsterNumberOfLives=100;
+      }
+
+
+    
   }
-}
+}}
 </script>
 <style>
 .gamers{
@@ -51,14 +95,17 @@ export default {
   align-items: center;
 }
 .gamer{
+  width: 22%;
   padding-right: 8rem;
 }
+.monster{
+  width: 22%;
+}
 .gamerNumberOfLives{
-  width: 20rem;
   background-color: green;
 }
 .monsterNumberOfLives{
-  width: 20rem;
+  width:100%;
   background-color: green;
 }
 .buttons{
