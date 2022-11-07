@@ -17,7 +17,7 @@
     <button class="giveUp" v-if="gamerNumberOfLives!=0" @click="attack('giveUp')">Pes Et</button>
   </div>
   <div class="log">
-    <h3 class="logsText">Logs</h3>
+    <h3 class="logsText">Logs.</h3>
     <div class="result" v-for="(item, index) in logsGamer" :key="index">
     <div class="gamerResut">
       <h3>Canavarın canının azaltman ({{item}})</h3>
